@@ -7,4 +7,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Company.Route-C44-G01.DAL\Company.Route-C44-G01.DAL.csproj" />
+  </ItemGroup>
+
 </Project>
