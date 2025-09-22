@@ -48,5 +48,15 @@ namespace Company.Route_C44_G01.PL.Controllers
             }
             return View(model);
         }
+
+        [HttpGet]
+        public IActionResult Details(int? id)
+        {
+            if (!id.HasValue) return BadRequest(); // 400
+            var department = _departmentRepository.Get(id.Value);
+            if (department is null) return NotFound(); // 404
+
+            return View(department);
+        }
     }
 }
