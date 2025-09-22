@@ -30,6 +30,7 @@ namespace Company.Route_C44_G01.PL.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Create(DepartmentDTO model)
         {
             if (ModelState.IsValid) // Server Side Validation
@@ -56,6 +57,31 @@ namespace Company.Route_C44_G01.PL.Controllers
             var department = _departmentRepository.Get(id.Value);
             if (department is null) return NotFound(); // 404
 
+            return View(department);
+        }
+
+        [HttpGet]
+        public IActionResult Update(int? id)
+        {
+            if (!id.HasValue) return BadRequest(); // 400
+            var department = _departmentRepository.Get(id.Value);
+            if (department is null) return NotFound(); // 404
+
+            return View(department);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Update(Department department)
+        {
+            if (ModelState.IsValid) // Server Side Validation
+            {
+                var count = _departmentRepository.Update(department);
+                if (count > 0)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+            }
             return View(department);
         }
     }
