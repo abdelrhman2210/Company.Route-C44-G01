@@ -14,6 +14,7 @@ namespace Company.Route_C44_G01.PL
             // Add services to the container.
             builder.Services.AddControllersWithViews(); // Add MVC services to the container
             builder.Services.AddScoped<IDepartmentRepo,DepartmentRepository>(); // Register DepartmentRepository for dependency injection
+            builder.Services.AddScoped<IEmployeeRepo, EmployeeRepository>(); // Register EmployeeRepository for dependency injection
             builder.Services.AddDbContext<CompanyDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
