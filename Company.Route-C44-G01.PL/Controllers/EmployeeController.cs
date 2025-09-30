@@ -19,6 +19,14 @@ namespace Company.Route_C44_G01.PL.Controllers
         public IActionResult Index()
         {
             var employees = _employeeRepository.GetAll();
+            // Dictionary : 3 Property
+            // 1.ViewData : Transfer Extra Information From Controller (Action) To View
+            //ViewData["Message"] = "Hellooooooooooooooooooo";
+
+            // 2.ViewBag : Transfer Extra Information From Controller (Action) To View
+            //ViewBag.Message = "Hellooooooooooooooooooo from ViewBag";
+
+            // 3.TempData : Transfer Extra Information From One Request To Another Request
 
             return View(employees);
         }
@@ -51,6 +59,7 @@ namespace Company.Route_C44_G01.PL.Controllers
                 var count = _employeeRepository.Add(employee);
                 if (count > 0)
                 {
+                    TempData["Message"] = "Employee Created Successfully";
                     return RedirectToAction(nameof(Index));
                 }
             }
