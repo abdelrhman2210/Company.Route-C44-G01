@@ -9,38 +9,11 @@ using System.Threading.Tasks;
 
 namespace Company.Route_C44_G01.BLL.Repositories
 {
-    public class DepartmentRepository : IDepartmentRepo
+    public class DepartmentRepository : GenericRepository<Department>, IDepartmentRepo
     {
-        private readonly CompanyDbContext _context;
-
-        public DepartmentRepository(CompanyDbContext context)
+        public DepartmentRepository(CompanyDbContext context) : base(context) // Call the base class constructor
         {
-            _context = context;
-        }
-
-        public IEnumerable<Department> GetAll()
-        {
-            return _context.Departments.ToList();
-        }
-        public Department? Get(int id)
-        {
-            return _context.Departments.Find(id);
-        }
-        public int Add(Department model)
-        {
-            _context.Departments.Add(model);
-            return _context.SaveChanges();
 
         }
-        public int Update(Department model)
-        {
-            _context.Departments.Update(model);
-            return _context.SaveChanges();
-        }
-        public int Delete(Department model)
-        {
-            _context.Departments.Remove(model);
-            return _context.SaveChanges();
-        }        
     }
 }

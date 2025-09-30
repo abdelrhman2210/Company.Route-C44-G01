@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace Company.Route_C44_G01.BLL.Interfaces
 {
-    public interface IEmployeeRepo
+    public interface IEmployeeRepo : IGenericRepository<Employee>
     {
-        IEnumerable<Employee> GetAll();
-        Employee? Get(int id);
+        //IEnumerable<Employee> GetAll();
+        //Employee? Get(int id);
 
-        int Add(Employee model);
-        int Update(Employee model);
-        int Delete(Employee model);
+        //int Add(Employee model);
+        //int Update(Employee model);
+        //int Delete(Employee model);
     }
 }
