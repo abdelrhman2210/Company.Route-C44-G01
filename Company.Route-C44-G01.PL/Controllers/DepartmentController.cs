@@ -51,23 +51,23 @@ namespace Company.Route_C44_G01.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Details(int? id)
+        public IActionResult Details(int? id , string viewName = "Details")
         {
-            if (!id.HasValue) return BadRequest(); // 400
+            if (!id.HasValue) return BadRequest("Invalid Id"); // 400
             var department = _departmentRepository.Get(id.Value);
             if (department is null) return NotFound(); // 404
 
-            return View(department);
+            return View(viewName , department);
         }
 
         [HttpGet]
         public IActionResult Update(int? id)
         {
-            if (!id.HasValue) return BadRequest(); // 400
-            var department = _departmentRepository.Get(id.Value);
-            if (department is null) return NotFound(); // 404
+            //if (!id.HasValue) return BadRequest(); // 400
+            //var department = _departmentRepository.Get(id.Value);
+            //if (department is null) return NotFound(); // 404
 
-            return View(department);
+            return Details(id, "Update");
         }
 
         [HttpPost]
@@ -77,6 +77,31 @@ namespace Company.Route_C44_G01.PL.Controllers
             if (ModelState.IsValid) // Server Side Validation
             {
                 var count = _departmentRepository.Update(department);
+                if (count > 0)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            return View(department);
+        }
+
+        [HttpGet]
+        public IActionResult Delete(int? id)
+        {
+            //if (!id.HasValue) return BadRequest(); // 400
+            //var department = _departmentRepository.Get(id.Value);
+            //if (department is null) return NotFound(); // 404
+
+            return Details(id , "Delete");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(Department department)
+        {
+            if (ModelState.IsValid) // Server Side Validation
+            {
+                var count = _departmentRepository.Delete(department);
                 if (count > 0)
                 {
                     return RedirectToAction(nameof(Index));
