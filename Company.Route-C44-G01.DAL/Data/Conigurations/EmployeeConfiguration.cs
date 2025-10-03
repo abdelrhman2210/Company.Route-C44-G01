@@ -14,6 +14,11 @@ namespace Company.Route_C44_G01.DAL.Data.Conigurations
         public void Configure(EntityTypeBuilder<Employee> builder)
         {
             builder.Property(E => E.Salary).HasColumnType("decimal(18,2)");
+
+            builder.HasOne(e => e.Department)
+                   .WithMany(d => d.Employees)
+                   .HasForeignKey(e => e.DepartmentId)
+                   .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }
