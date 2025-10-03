@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +19,11 @@ namespace Company.Route_C44_G01.DAL.Models
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
         public DateTime HiringDate { get; set; }
-        
+
+        [DisplayName("Department")]
+        public int? DepartmentId { get; set; }
+        public virtual Department? Department { get; set; }
+
+
     }
 }

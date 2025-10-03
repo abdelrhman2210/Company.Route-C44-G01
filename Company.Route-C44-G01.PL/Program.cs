@@ -18,6 +18,7 @@ namespace Company.Route_C44_G01.PL
             builder.Services.AddDbContext<CompanyDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+                options.UseLazyLoadingProxies(); // Enable lazy loading proxies
             }); // Register CompanyDbContext for dependency injection
 
             var app = builder.Build();

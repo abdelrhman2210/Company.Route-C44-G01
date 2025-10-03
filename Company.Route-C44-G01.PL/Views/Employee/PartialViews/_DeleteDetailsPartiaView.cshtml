@@ -42,3 +42,8 @@
     <label asp-for="CreateAt" class="col-form-label"></label>
     <input asp-for="CreateAt" class="form-control" readonly />
 </div>
+<div class="mb-3">
+    <label class="form-label fw-bold">Department</label>
+    <input type="hidden" asp-for="DepartmentId" />
+    <input class="form-control" value="@Model.Department?.Name" readonly />
+</div>

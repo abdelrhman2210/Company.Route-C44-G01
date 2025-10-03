@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Company.Route_C44_G01.DAL.Models;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Company.Route_C44_G01.PL.DTOS
@@ -30,5 +31,10 @@ namespace Company.Route_C44_G01.PL.DTOS
 
         [DisplayName(displayName: "Date Of Creation")]
         public DateTime CreateAt { get; set; }
+
+        [DisplayName("Department")]
+        public int? DepartmentId { get; set; }
+        
+
     }
 }

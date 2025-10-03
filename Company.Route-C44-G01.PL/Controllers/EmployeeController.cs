@@ -9,10 +9,12 @@ namespace Company.Route_C44_G01.PL.Controllers
     public class EmployeeController : Controller
     {
         private readonly IEmployeeRepo _employeeRepository;
+        private readonly IDepartmentRepo _departmentRepo;
 
-        public EmployeeController(IEmployeeRepo employeeRepository)
+        public EmployeeController(IEmployeeRepo employeeRepository , IDepartmentRepo departmentRepo)
         {
             _employeeRepository = employeeRepository;
+            _departmentRepo = departmentRepo;
         }
 
         [HttpGet]  // GET: /Department/Index 
@@ -34,6 +36,8 @@ namespace Company.Route_C44_G01.PL.Controllers
         [HttpGet]
         public IActionResult Create()
         {
+            var departments = _departmentRepo.GetAll();
+            ViewData["departments"] = departments;
             return View();
         }
 
@@ -54,7 +58,8 @@ namespace Company.Route_C44_G01.PL.Controllers
                     Phone = model.Phone,
                     Salary = model.Salary,
                     Name = model.Name,
-                    CreateAt = model.CreateAt
+                    CreateAt = model.CreateAt,
+                    DepartmentId = model.DepartmentId
                 };
                 var count = _employeeRepository.Add(employee);
                 if (count > 0)
@@ -79,6 +84,8 @@ namespace Company.Route_C44_G01.PL.Controllers
         [HttpGet]
         public IActionResult Update(int? id)
         {
+            var departments = _departmentRepo.GetAll();
+            ViewData["departments"] = departments;
             if (!id.HasValue) return BadRequest(); // 400
             var employee = _employeeRepository.Get(id.Value);
             if (employee is null) return NotFound(); // 404
@@ -93,7 +100,8 @@ namespace Company.Route_C44_G01.PL.Controllers
                 Phone = employee.Phone,
                 Salary = employee.Salary,
                 Name = employee.Name,
-                CreateAt = employee.CreateAt
+                CreateAt = employee.CreateAt,
+                DepartmentId = employee.DepartmentId
             };
             return View(employeeDTO);
         }
@@ -116,7 +124,9 @@ namespace Company.Route_C44_G01.PL.Controllers
                     Phone = model.Phone,
                     Salary = model.Salary,
                     Name = model.Name,
-                    CreateAt = model.CreateAt
+                    CreateAt = model.CreateAt,
+                    DepartmentId = model.DepartmentId
+
                 };
                 var count = _employeeRepository.Update(employee);
                 if (count > 0)
