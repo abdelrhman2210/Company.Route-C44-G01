@@ -16,5 +16,7 @@ namespace Company.Route_C44_G01.BLL.Interfaces
         //int Update(Department model);
         //int Delete(Department model);
 
+        List<Department> GetByName(string name);
+
     }
 }

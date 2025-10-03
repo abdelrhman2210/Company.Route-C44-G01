@@ -18,9 +18,18 @@ namespace Company.Route_C44_G01.PL.Controllers
         }
 
         [HttpGet]  // GET: /Department/Index 
-        public IActionResult Index()
+        public IActionResult Index(string? SearchEmp)
         {
-            var employees = _employeeRepository.GetAll();
+            IEnumerable<Employee> employees;
+            if (string.IsNullOrEmpty(SearchEmp))
+            {
+                employees = _employeeRepository.GetAll();
+            }
+            else
+            {
+                employees = _employeeRepository.GetByName(SearchEmp);
+            }           
+            
             // Dictionary : 3 Property
             // 1.ViewData : Transfer Extra Information From Controller (Action) To View
             //ViewData["Message"] = "Hellooooooooooooooooooo";

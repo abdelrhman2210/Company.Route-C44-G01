@@ -5,18 +5,10 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>All EMployees</h1>
+<h1>All Employees</h1>
 
 <br />
 <br /> 
-
-@* <div class="m-10 alert-info"">
-    <p>@ViewData["Message"]</p>
-</div> *@
-
-@* <div class="m-10 alert-danger" ">
-    <p>@ViewBag.Message</p>
-</div> *@
 
 @if (!string.IsNullOrEmpty(TempData["Message"] as string))
 {
@@ -24,6 +16,23 @@
         <p>@TempData["Message"]</p>
     </div>
 }
+
+<form>
+    <div class="container">
+        <div class="row">
+            <div class="col-9">
+                <input name="SearchEmp" placeholder="Search By Name" class="form-control" />
+            </div>
+            <div class="col-3">
+                <input type="submit" value="Search" class="btn btn-success" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<br />
+<br />
+
 <a asp-action="Create" asp-controller="Employee" class="btn btn-primary">Create Employee</a>
 
 <br />

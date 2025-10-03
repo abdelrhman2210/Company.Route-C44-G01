@@ -16,11 +16,19 @@ namespace Company.Route_C44_G01.PL.Controllers
         }
 
         [HttpGet]  // GET: /Department/Index 
-        public IActionResult Index()
+        public IActionResult Index(string? SearchDept)
         {
-            var departments = _departmentRepository.GetAll();
+            IEnumerable<Department> depts;
+            if (string.IsNullOrEmpty(SearchDept))
+            {
+                depts = _departmentRepository.GetAll();
+            }
+            else
+            {
+                depts = _departmentRepository.GetByName(SearchDept);
+            }
 
-            return View(departments);
+            return View(depts);
         }
 
         [HttpGet] 
@@ -44,6 +52,7 @@ namespace Company.Route_C44_G01.PL.Controllers
                 var count = _departmentRepository.Add(department);
                 if (count > 0)
                 {
+                    TempData["Message"] = "Department Created Successfully";
                     return RedirectToAction(nameof(Index));
                 }
             }

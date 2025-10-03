@@ -10,6 +10,29 @@
 <br />
 <br /> 
 
+@if (!string.IsNullOrEmpty(TempData["Message"] as string))
+{
+    <div class="m-3 alert alert-info">
+        <p>@TempData["Message"]</p>
+    </div>
+}
+
+<form>
+    <div class="container">
+        <div class="row">
+            <div class="col-9">
+                <input name="SearchDept" placeholder="Search By Name" class="form-control" />
+            </div>
+            <div class="col-3">
+                <input type="submit" value="Search" class="btn btn-success" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<br />
+<br /> 
+
 <a asp-action="Create" asp-controller="Department" class="btn btn-primary">Create Department</a>
 
 <br />
