@@ -21,6 +21,11 @@ namespace Company.Route_C44_G01.PL
                 options.UseLazyLoadingProxies(); // Enable lazy loading proxies
             }); // Register CompanyDbContext for dependency injection
 
+            // LifeTime :
+            //builder.Services.addscoped() // Create New Instance Per Request - unreachable object after request is completed
+            //builder.Services.AddSingleton() // Create Single Instance For All Requests - reachable object as long as the application is running
+            //builder.Services.addtransient() // Create New Instance Every Time You Request It - unreachable object after request is completed
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
