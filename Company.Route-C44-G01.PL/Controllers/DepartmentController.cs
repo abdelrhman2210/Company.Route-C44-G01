@@ -1,4 +1,5 @@
-﻿using Company.Route_C44_G01.BLL.Interfaces;
+﻿using AutoMapper;
+using Company.Route_C44_G01.BLL.Interfaces;
 using Company.Route_C44_G01.BLL.Repositories;
 using Company.Route_C44_G01.DAL.Models;
 using Company.Route_C44_G01.PL.DTOS;
@@ -9,10 +10,15 @@ namespace Company.Route_C44_G01.PL.Controllers
     public class DepartmentController : Controller
     {
         private readonly IDepartmentRepo _departmentRepository;
+        private readonly IMapper _mapper;
 
-        public DepartmentController(IDepartmentRepo departmentRepository)
+        public DepartmentController(
+            IDepartmentRepo departmentRepository,
+            IMapper mapper
+            )
         {
             _departmentRepository = departmentRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]  // GET: /Department/Index 
@@ -43,12 +49,14 @@ namespace Company.Route_C44_G01.PL.Controllers
         {
             if (ModelState.IsValid) // Server Side Validation
             {
-                var department = new Department()
-                {
-                    Code = model.Code,
-                    Name = model.Name,
-                    CreateAt = model.CreateAt
-                };
+                //var department = new Department()
+                //{
+                //    Code = model.Code,
+                //    Name = model.Name,
+                //    CreateAt = model.CreateAt
+                //};
+
+                var department = _mapper.Map<Department>(model);
                 var count = _departmentRepository.Add(department);
                 if (count > 0)
                 {

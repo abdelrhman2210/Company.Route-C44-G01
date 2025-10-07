@@ -1,7 +1,10 @@
+using AutoMapper;
 using Company.Route_C44_G01.BLL.Interfaces;
 using Company.Route_C44_G01.BLL.Repositories;
 using Company.Route_C44_G01.DAL.Data.Contexts;
+using Company.Route_C44_G01.PL.Mapping;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Company.Route_C44_G01.PL
 {
@@ -15,11 +18,17 @@ namespace Company.Route_C44_G01.PL
             builder.Services.AddControllersWithViews(); // Add MVC services to the container
             builder.Services.AddScoped<IDepartmentRepo,DepartmentRepository>(); // Register DepartmentRepository for dependency injection
             builder.Services.AddScoped<IEmployeeRepo, EmployeeRepository>(); // Register EmployeeRepository for dependency injection
+            //builder.Services.AddTransient<IMapper, Mapper>(); // Register AutoMapper for dependency injection
             builder.Services.AddDbContext<CompanyDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
                 options.UseLazyLoadingProxies(); // Enable lazy loading proxies
             }); // Register CompanyDbContext for dependency injection
+
+            // builder.Services.AddAutoMapper(typeof(EmpProfile)); // Register AutoMapper for dependency injection
+            builder.Services.AddAutoMapper(M => M.AddProfile(new EmpProfile())); // Register AutoMapper for dependency injection
+            builder.Services.AddAutoMapper(M => M.AddProfile(new DeptProfile())); // Register AutoMapper for dependency injection
+
 
             // LifeTime :
             //builder.Services.addscoped() // Create New Instance Per Request - unreachable object after request is completed
