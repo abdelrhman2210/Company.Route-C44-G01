@@ -1,49 +1,44 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Company.Route_C44_G01.BLL;
 using Company.Route_C44_G01.BLL.Interfaces;
 using Company.Route_C44_G01.BLL.Repositories;
 using Company.Route_C44_G01.DAL.Models;
 using Company.Route_C44_G01.PL.DTOS;
-using AutoMapper;
+using Company.Route_C44_G01.PL.Helpers;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Company.Route_C44_G01.PL.Controllers
 {
     public class EmployeeController : Controller
     {
-
-        //private readonly IEmployeeRepo _employeeRepository;
-        //private readonly IDepartmentRepo _departmentRepo;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
 
 
         public EmployeeController(
-            //IEmployeeRepo employeeRepository ,
-            //IDepartmentRepo departmentRepo ,
-
             IUnitOfWork unitOfWork,
             IMapper mapper
             )
         {
-            //_employeeRepository = employeeRepository;
-            //_departmentRepo = departmentRepo;
-
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
         [HttpGet]  // GET: /Department/Index 
-        public IActionResult Index(string? SearchEmp)
+        public async Task<IActionResult> Index(string? SearchEmp)
         {
             IEnumerable<Employee> employees;
             if (string.IsNullOrEmpty(SearchEmp))
             {
-                employees = _unitOfWork.EmployeeRepo.GetAll();
+                employees = await _unitOfWork.EmployeeRepo.GetAll();
             }
             else
             {
-                employees = _unitOfWork.EmployeeRepo.GetByName(SearchEmp);
-            }           
-            
+                employees = await _unitOfWork.EmployeeRepo.GetByName(SearchEmp);
+            }
+
+            #region Dictionary Explanation
             // Dictionary : 3 Property
             // 1.ViewData : Transfer Extra Information From Controller (Action) To View
             //ViewData["Message"] = "Hellooooooooooooooooooo";
@@ -51,44 +46,35 @@ namespace Company.Route_C44_G01.PL.Controllers
             // 2.ViewBag : Transfer Extra Information From Controller (Action) To View
             //ViewBag.Message = "Hellooooooooooooooooooo from ViewBag";
 
-            // 3.TempData : Transfer Extra Information From One Request To Another Request
+            // 3.TempData : Transfer Extra Information From One Request To Another Request 
+            #endregion
 
             return View(employees);
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            var departments = _unitOfWork.DepartmentRepo.GetAll();
+            var departments = await _unitOfWork.DepartmentRepo.GetAll();
             ViewData["departments"] = departments;
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(CreateEmployeeDTO model)
+        public async Task<IActionResult> Create(CreateEmployeeDTO model)
         {
+            var employee = _mapper.Map<Employee>(model);
+
             if (ModelState.IsValid) // Server Side Validation
             {
-                ////var employee = new Employee()
-                ////{
-                ////    Address = model.Address,
-                ////    Age = model.Age,
-                ////    Email = model.Email,
-                ////    IsActive = model.IsActive,
-                ////    IsDeleted = model.IsDeleted,
-                ////    HiringDate = model.HiringDate,
-                ////    Phone = model.Phone,
-                ////    Salary = model.Salary,
-                ////    Name = model.Name,
-                ////    CreateAt = model.CreateAt,
-                ////    DepartmentId = model.DepartmentId
-                ////};
-                ///
+                if(model.Image is not null)
+                {
+                    model.ImageName = DocumentSettings.UploadFile(model.Image, "Images");
+                }
 
-                var employee = _mapper.Map<Employee>(model);
-                _unitOfWork.EmployeeRepo.Add(employee);
-                var count = _unitOfWork.SaveChanges();
+                await _unitOfWork.EmployeeRepo.Add(employee);
+                var count = await _unitOfWork.SaveChanges();
                 if (count > 0)
                 {
                     TempData["Message"] = "Employee Created Successfully";
@@ -99,64 +85,47 @@ namespace Company.Route_C44_G01.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Details(int? id, string viewName = "Details")
+        public async Task<IActionResult> Details(int? id, string viewName = "Details")
         {
             if (!id.HasValue) return BadRequest("Invalid Id"); // 400
-            var employee = _unitOfWork.EmployeeRepo.Get(id.Value);
+            var employee = await _unitOfWork.EmployeeRepo.Get(id.Value);
             if (employee is null) return NotFound(); // 404
 
             return View(viewName, employee);
         }
 
         [HttpGet]
-        public IActionResult Update(int? id)
+        public async Task<IActionResult> Update(int? id)
         {
-            var departments = _unitOfWork.DepartmentRepo.GetAll();
+            var departments = await _unitOfWork.DepartmentRepo.GetAll();
             ViewData["departments"] = departments;
             if (!id.HasValue) return BadRequest(); // 400
-            var employee = _unitOfWork.EmployeeRepo.Get(id.Value);
-            if (employee is null) return NotFound(); // 404
-            var employeeDTO = new CreateEmployeeDTO()
-            {
-                Address = employee.Address,
-                Age = employee.Age,
-                Email = employee.Email,
-                IsActive = employee.IsActive,
-                IsDeleted = employee.IsDeleted,
-                HiringDate = employee.HiringDate,
-                Phone = employee.Phone,
-                Salary = employee.Salary,
-                Name = employee.Name,
-                CreateAt = employee.CreateAt,
-                DepartmentId = employee.DepartmentId
-            };
-            return View(employeeDTO);
+            var model = await _unitOfWork.EmployeeRepo.Get(id.Value);
+            if (model is null) return NotFound(); // 404
+            var employee = _mapper.Map<CreateEmployeeDTO>(model);
+            return View(employee);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Update([FromRoute] int id , CreateEmployeeDTO model)
+        public async Task<IActionResult> Update([FromRoute] int id , CreateEmployeeDTO model)
         {
             if (ModelState.IsValid) // Server Side Validation
             {
-                var employee = new Employee()
+                if (model.ImageName is not null && model.Image is not null)
                 {
-                    Id = id,
-                    Address = model.Address,
-                    Age = model.Age,
-                    Email = model.Email,
-                    IsActive = model.IsActive,
-                    IsDeleted = model.IsDeleted,
-                    HiringDate = model.HiringDate,
-                    Phone = model.Phone,
-                    Salary = model.Salary,
-                    Name = model.Name,
-                    CreateAt = model.CreateAt,
-                    DepartmentId = model.DepartmentId
+                    DocumentSettings.DeleteFile(model.ImageName , "Images");
+                }
 
-                };
+                if(model.Image is not null)
+                {
+                    model.ImageName = DocumentSettings.UploadFile(model.Image, "Images");
+                }
+                
+                var employee = _mapper.Map<Employee>(model);
+                employee.Id = id;
                 _unitOfWork.EmployeeRepo.Update(employee);
-                var count = _unitOfWork.SaveChanges();
+                var count = await _unitOfWork.SaveChanges();
 
                 if (count > 0)
                 {
@@ -167,30 +136,35 @@ namespace Company.Route_C44_G01.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
-            //if (!id.HasValue) return BadRequest(); // 400
-            //var department = _departmentRepository.Get(id.Value);
-            //if (department is null) return NotFound(); // 404
 
-            return Details(id, "Delete");
+            return await Details(id, "Delete");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(Employee model)
+        public async Task<IActionResult> Delete([FromRoute] int id ,Employee employee)
         {
             if (ModelState.IsValid) // Server Side Validation
             {
-                _unitOfWork.EmployeeRepo.Delete(model);
-                var count = _unitOfWork.SaveChanges();
-
-                if (count > 0)
+                if (ModelState.IsValid)
                 {
-                    return RedirectToAction(nameof(Index));
+                    if (id == employee.Id)
+                    {
+                        _unitOfWork.EmployeeRepo.Delete(employee);
+                        var cnt = await _unitOfWork.SaveChanges();
+                        if (cnt > 0)
+                        {
+                            DocumentSettings.DeleteFile(employee.ImageName, "Images");
+                            return RedirectToAction(nameof(Index));
+                        }
+                    }
+                    else
+                        return BadRequest();
                 }
             }
-            return View(model);
+            return View(employee);
         }
     }
 }

@@ -10,18 +10,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Company.Route_C44_G01.BLL.Repositories
 {
-    public class EmployeeRepository : GenericRepository<Employee> , IEmployeeRepo
+    public class EmployeeRepository : GenericRepository<Employee>, IEmployeeRepo
     {
-        private readonly CompanyDbContext _context;
-
-        public EmployeeRepository(CompanyDbContext context) : base(context) // Call the base class constructor
+        public EmployeeRepository(CompanyDbContext context) : base(context)
         {
-            _context = context;
-        }
-
-        public List<Employee> GetByName(string name)
-        {
-           return _context.Employees.Include(E => E.Department).Where(E => E.Name.ToLower().Contains(name.ToLower())).ToList();
         }
     }
 }

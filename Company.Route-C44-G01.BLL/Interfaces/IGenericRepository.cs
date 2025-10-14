@@ -10,11 +10,12 @@ namespace Company.Route_C44_G01.BLL.Interfaces
 
     public interface IGenericRepository<T> where T : BaseEntity 
     {
-        IEnumerable<T> GetAll();
-        T? Get(int id);
+        Task<IEnumerable<T>> GetAll();
+        Task<IEnumerable<T>> GetByName(string name);
+        Task<T?> Get(int id);
 
-        void Add(T model);
-        void Update(T model);
-        void Delete(T model);
+        Task Add(T data);
+        void Update(T data);
+        void Delete(T data);
     }
 }

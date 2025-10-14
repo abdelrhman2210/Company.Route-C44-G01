@@ -25,9 +25,9 @@ namespace Company.Route_C44_G01.BLL
             DepartmentRepo = new DepartmentRepository(_context);
         }
 
-        public int SaveChanges()
+        public async Task<int> SaveChanges()
         {
-            return _context.SaveChanges();
+            return await _context.SaveChangesAsync();
         }
 
         public void Dispose()

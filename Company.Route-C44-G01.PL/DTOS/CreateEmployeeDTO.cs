@@ -34,7 +34,10 @@ namespace Company.Route_C44_G01.PL.DTOS
 
         [DisplayName("Department")]
         public int? DepartmentId { get; set; }
-        
+        public IFormFile? Image { get; set; }
+        [Display(Name = "Image")]
+        public string? ImageName { get; set; }
+
 
     }
 }
