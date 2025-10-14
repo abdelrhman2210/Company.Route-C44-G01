@@ -3,6 +3,7 @@ using Company.Route_C44_G01.DAL.Data.Contexts;
 using Company.Route_C44_G01.DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,40 +13,53 @@ namespace Company.Route_C44_G01.BLL.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
     {
-        private readonly CompanyDbContext _context;
+        private readonly CompanyDbContext _dbContext;
         public GenericRepository(CompanyDbContext context)
         {
-            _context = context;
+            _dbContext = context;
         }
-        public IEnumerable<T> GetAll()
+
+        public async Task Add(T data)
+        {
+            await _dbContext.Set<T>().AddAsync(data);
+        }
+
+        public void Delete(T data)
+        {
+            _dbContext.Set<T>().Remove(data);
+        }
+
+        public async Task<T?> Get(int id)
         {
             if(typeof(T) == typeof(Employee))
             {
-                return (IEnumerable<T>) _context.Employees.Include(E => E.Department).ToList();
+                return await _dbContext.Employees.Include(e => e.Department).FirstOrDefaultAsync(e => e.Id == id) as T;
             }
-            return _context.Set<T>().ToList();
+            return _dbContext.Set<T>().Find(id);
         }
-        public T? Get(int id)
+
+        public async Task<IEnumerable<T>> GetAll()
         {
             if (typeof(T) == typeof(Employee))
             {
-                return _context.Employees.Include(E => E.Department).FirstOrDefault(E => E.Id == id) as T;
+                return await _dbContext.Employees.Include(e => e.Department).ToListAsync()as IEnumerable<T>;
             }
-            return _context.Set<T>().Find(id);
-        }  
-        public void Add(T model)
-        {
-            _context.Set<T>().Add(model);
-        }
-        public void Update(T model)
-        {
-            _context.Set<T>().Update(model);
+            return await _dbContext.Set<T>().ToListAsync();
         }
 
-        public void Delete(T model)
+        public async Task<IEnumerable<T>> GetByName(string name)
         {
-            _context.Set<T>().Remove(model);
+            if (typeof(T) == typeof(Employee))
+            {
+                return await _dbContext.Employees.Include(e => e.Department).Where(x => x.Name.ToLower().Contains(name.ToLower())).ToListAsync() as IEnumerable<T>;
+            }
+            else
+                return await _dbContext.Departments.Where(x => x.Name.ToLower().Contains(name.ToLower())).ToListAsync() as IEnumerable<T>;
         }
 
+        public void Update(T data)
+        {
+            _dbContext.Set<T>().Update(data);
+        }
     }
 }

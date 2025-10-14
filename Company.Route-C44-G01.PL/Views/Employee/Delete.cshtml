@@ -5,13 +5,24 @@
 }
 
 <h1>Delete Employee</h1>
+
+<div class="d-flex flex-column align-items-center mb-4">
+    <div class="border border-3 border-light shadow-sm rounded-3 d-flex justify-content-center align-items-center"
+         style="width: 150px; height: 150px; background-color: #f8f9fa;">
+        <img src="~/Files/Images/@(Model.ImageName ?? "user.png")"
+             alt="Employee Photo"
+             style="max-width: 100%; max-height: 100%; object-fit: contain; object-position: center;" />
+    </div>
+
+</div>
+
 <br /> 
 <br />
 
 <form asp-action="Delete">
     <partial name="PartialViews/_DeleteDetailsPartiaView" />
 
-
+    <input asp-for="ImageName" hidden />
     <div class="my-3">
         <input type="submit" value="Delete" class="btn btn-danger" />
         <a asp-action="Index" class="btn btn-outline-primary">Back To List</a>

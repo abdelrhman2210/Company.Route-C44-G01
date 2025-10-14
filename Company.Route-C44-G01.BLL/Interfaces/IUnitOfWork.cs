@@ -10,6 +10,6 @@ namespace Company.Route_C44_G01.BLL.Interfaces
     {
         IDepartmentRepo DepartmentRepo { get; }
         IEmployeeRepo EmployeeRepo { get; }
-        int SaveChanges();
+        Task<int> SaveChanges();
     }
 }

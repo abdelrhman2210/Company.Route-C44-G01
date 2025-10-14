@@ -23,7 +23,6 @@ namespace Company.Route_C44_G01.DAL.Models
         [DisplayName("Department")]
         public int? DepartmentId { get; set; }
         public virtual Department? Department { get; set; }
-
-
+        public string? ImageName { get; set; }
     }
 }

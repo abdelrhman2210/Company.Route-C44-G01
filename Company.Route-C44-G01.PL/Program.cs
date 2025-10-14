@@ -51,7 +51,7 @@ namespace Company.Route_C44_G01.PL
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(

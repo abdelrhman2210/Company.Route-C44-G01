@@ -12,16 +12,9 @@ namespace Company.Route_C44_G01.BLL.Repositories
 {
     public class DepartmentRepository : GenericRepository<Department>, IDepartmentRepo
     {
-        private readonly CompanyDbContext _context;
-
-        public DepartmentRepository(CompanyDbContext context) : base(context) // Call the base class constructor
+        public DepartmentRepository(CompanyDbContext context) : base(context)
         {
-            _context = context;
-        }
-
-        public List<Department> GetByName(string name)
-        {
-              return _context.Departments.Where(D => D.Name.ToLower().Contains(name.ToLower())).ToList();
         }
     }
 }
+
