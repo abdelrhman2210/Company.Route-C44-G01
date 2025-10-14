@@ -9,16 +9,19 @@ namespace Company.Route_C44_G01.PL.Controllers
 {
     public class DepartmentController : Controller
     {
-        private readonly IDepartmentRepo _departmentRepository;
+        //private readonly IDepartmentRepo _departmentRepository;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
         public DepartmentController(
-            IDepartmentRepo departmentRepository,
-            IMapper mapper
+            //IDepartmentRepo departmentRepository,
+            IMapper mapper,
+            IUnitOfWork unitOfWork
             )
         {
-            _departmentRepository = departmentRepository;
+            //_departmentRepository = departmentRepository;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]  // GET: /Department/Index 
@@ -27,11 +30,11 @@ namespace Company.Route_C44_G01.PL.Controllers
             IEnumerable<Department> depts;
             if (string.IsNullOrEmpty(SearchDept))
             {
-                depts = _departmentRepository.GetAll();
+                depts = _unitOfWork.DepartmentRepo.GetAll();
             }
             else
             {
-                depts = _departmentRepository.GetByName(SearchDept);
+                depts = _unitOfWork.DepartmentRepo.GetByName(SearchDept);
             }
 
             return View(depts);
@@ -57,7 +60,9 @@ namespace Company.Route_C44_G01.PL.Controllers
                 //};
 
                 var department = _mapper.Map<Department>(model);
-                var count = _departmentRepository.Add(department);
+                _unitOfWork.DepartmentRepo.Add(department);
+                var count = _unitOfWork.SaveChanges();
+
                 if (count > 0)
                 {
                     TempData["Message"] = "Department Created Successfully";
@@ -71,7 +76,7 @@ namespace Company.Route_C44_G01.PL.Controllers
         public IActionResult Details(int? id , string viewName = "Details")
         {
             if (!id.HasValue) return BadRequest("Invalid Id"); // 400
-            var department = _departmentRepository.Get(id.Value);
+            var department = _unitOfWork.DepartmentRepo.Get(id.Value);
             if (department is null) return NotFound(); // 404
 
             return View(viewName , department);
@@ -81,7 +86,7 @@ namespace Company.Route_C44_G01.PL.Controllers
         public IActionResult Update(int? id)
         {
             if (!id.HasValue) return BadRequest(); // 400
-            var department = _departmentRepository.Get(id.Value);
+            var department = _unitOfWork.DepartmentRepo.Get(id.Value);
             if (department is null) return NotFound(); // 404
             var departmentDTO = new DepartmentDTO()
             {
@@ -105,7 +110,9 @@ namespace Company.Route_C44_G01.PL.Controllers
                     Name = model.Name,
                     CreateAt = model.CreateAt
                 };
-                var count = _departmentRepository.Update(department);
+                _unitOfWork.DepartmentRepo.Update(department);
+                var count = _unitOfWork.SaveChanges();
+
                 if (count > 0)
                 {
                     return RedirectToAction(nameof(Index));
@@ -130,7 +137,9 @@ namespace Company.Route_C44_G01.PL.Controllers
         {
             if (ModelState.IsValid) // Server Side Validation
             {
-                var count = _departmentRepository.Delete(department);
+                _unitOfWork.DepartmentRepo.Delete(department);
+                var count = _unitOfWork.SaveChanges();
+
                 if (count > 0)
                 {
                     return RedirectToAction(nameof(Index));

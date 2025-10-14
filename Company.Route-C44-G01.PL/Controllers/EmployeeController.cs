@@ -9,18 +9,25 @@ namespace Company.Route_C44_G01.PL.Controllers
 {
     public class EmployeeController : Controller
     {
-        private readonly IEmployeeRepo _employeeRepository;
-        private readonly IDepartmentRepo _departmentRepo;
+
+        //private readonly IEmployeeRepo _employeeRepository;
+        //private readonly IDepartmentRepo _departmentRepo;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
+
 
         public EmployeeController(
-            IEmployeeRepo employeeRepository ,
-            IDepartmentRepo departmentRepo ,
+            //IEmployeeRepo employeeRepository ,
+            //IDepartmentRepo departmentRepo ,
+
+            IUnitOfWork unitOfWork,
             IMapper mapper
             )
         {
-            _employeeRepository = employeeRepository;
-            _departmentRepo = departmentRepo;
+            //_employeeRepository = employeeRepository;
+            //_departmentRepo = departmentRepo;
+
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -30,11 +37,11 @@ namespace Company.Route_C44_G01.PL.Controllers
             IEnumerable<Employee> employees;
             if (string.IsNullOrEmpty(SearchEmp))
             {
-                employees = _employeeRepository.GetAll();
+                employees = _unitOfWork.EmployeeRepo.GetAll();
             }
             else
             {
-                employees = _employeeRepository.GetByName(SearchEmp);
+                employees = _unitOfWork.EmployeeRepo.GetByName(SearchEmp);
             }           
             
             // Dictionary : 3 Property
@@ -52,7 +59,7 @@ namespace Company.Route_C44_G01.PL.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            var departments = _departmentRepo.GetAll();
+            var departments = _unitOfWork.DepartmentRepo.GetAll();
             ViewData["departments"] = departments;
             return View();
         }
@@ -80,7 +87,8 @@ namespace Company.Route_C44_G01.PL.Controllers
                 ///
 
                 var employee = _mapper.Map<Employee>(model);
-                var count = _employeeRepository.Add(employee);
+                _unitOfWork.EmployeeRepo.Add(employee);
+                var count = _unitOfWork.SaveChanges();
                 if (count > 0)
                 {
                     TempData["Message"] = "Employee Created Successfully";
@@ -94,7 +102,7 @@ namespace Company.Route_C44_G01.PL.Controllers
         public IActionResult Details(int? id, string viewName = "Details")
         {
             if (!id.HasValue) return BadRequest("Invalid Id"); // 400
-            var employee = _employeeRepository.Get(id.Value);
+            var employee = _unitOfWork.EmployeeRepo.Get(id.Value);
             if (employee is null) return NotFound(); // 404
 
             return View(viewName, employee);
@@ -103,10 +111,10 @@ namespace Company.Route_C44_G01.PL.Controllers
         [HttpGet]
         public IActionResult Update(int? id)
         {
-            var departments = _departmentRepo.GetAll();
+            var departments = _unitOfWork.DepartmentRepo.GetAll();
             ViewData["departments"] = departments;
             if (!id.HasValue) return BadRequest(); // 400
-            var employee = _employeeRepository.Get(id.Value);
+            var employee = _unitOfWork.EmployeeRepo.Get(id.Value);
             if (employee is null) return NotFound(); // 404
             var employeeDTO = new CreateEmployeeDTO()
             {
@@ -147,7 +155,9 @@ namespace Company.Route_C44_G01.PL.Controllers
                     DepartmentId = model.DepartmentId
 
                 };
-                var count = _employeeRepository.Update(employee);
+                _unitOfWork.EmployeeRepo.Update(employee);
+                var count = _unitOfWork.SaveChanges();
+
                 if (count > 0)
                 {
                     return RedirectToAction(nameof(Index));
@@ -172,7 +182,9 @@ namespace Company.Route_C44_G01.PL.Controllers
         {
             if (ModelState.IsValid) // Server Side Validation
             {
-                var count = _employeeRepository.Delete(model);
+                _unitOfWork.EmployeeRepo.Delete(model);
+                var count = _unitOfWork.SaveChanges();
+
                 if (count > 0)
                 {
                     return RedirectToAction(nameof(Index));
