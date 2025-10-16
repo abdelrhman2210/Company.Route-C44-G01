@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Company.Route_C44_G01.PL.Controllers
 {
+    [Authorize]
     public class EmployeeController : Controller
     {
         private readonly IMapper _mapper;

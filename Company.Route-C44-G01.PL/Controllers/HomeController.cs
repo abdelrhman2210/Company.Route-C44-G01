@@ -1,9 +1,11 @@
 using System.Diagnostics;
 using Company.Route_C44_G01.PL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Company.Route_C44_G01.PL.Controllers
 {
+    [Authorize] 
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

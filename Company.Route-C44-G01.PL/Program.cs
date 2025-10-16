@@ -42,6 +42,14 @@ namespace Company.Route_C44_G01.PL
             //builder.Services.AddSingleton() // Create Single Instance For All Requests - reachable object as long as the application is running
             //builder.Services.addtransient() // Create New Instance Every Time You Request It - unreachable object after request is completed
 
+            builder.Services.ConfigureApplicationCookie(config =>
+            {
+                config.LoginPath = "/Account/SignIn";
+                //config.LogoutPath = "/Account/SignOut";
+                //config.AccessDeniedPath = "/Account/AccessDenied";
+                config.ExpireTimeSpan = TimeSpan.FromMinutes(10); 
+            }); // Configure application cookie settings
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
