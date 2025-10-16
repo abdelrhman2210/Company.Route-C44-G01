@@ -97,7 +97,12 @@ namespace Company.Route_C44_G01.PL.Controllers
         #endregion
 
         #region SignOut
-
+        [HttpGet]
+        public new async Task<IActionResult> SignOut()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("SignIn");
+        }
         #endregion
     }
 }
