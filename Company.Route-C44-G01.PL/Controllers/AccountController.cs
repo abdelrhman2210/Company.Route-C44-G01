@@ -8,10 +8,12 @@ namespace Company.Route_C44_G01.PL.Controllers
     public class AccountController : Controller
     {
         private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
 
-        public AccountController(UserManager<AppUser> userManager)
+        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
         }
 
 
@@ -78,10 +80,14 @@ namespace Company.Route_C44_G01.PL.Controllers
                 var usr = await _userManager.FindByEmailAsync(model.Email);
                 if (usr is not null)
                 {
-                    var result = await _userManager.CheckPasswordAsync(usr, model.Password);
-                    if (result)
+                    var flag = await _userManager.CheckPasswordAsync(usr, model.Password);
+                    if (flag)
                     {
-                        return RedirectToAction(nameof(HomeController.Index), "Home");
+                        var result = await _signInManager.PasswordSignInAsync(usr, model.Password, model.RememberME, false);
+                        if (result.Succeeded)
+                        {
+                            return RedirectToAction(nameof(HomeController.Index), "Home");
+                        }
                     }
                 }
                 ModelState.AddModelError("", "Invalid SignIn !!");
