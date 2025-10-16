@@ -3,7 +3,9 @@ using Company.Route_C44_G01.BLL;
 using Company.Route_C44_G01.BLL.Interfaces;
 using Company.Route_C44_G01.BLL.Repositories;
 using Company.Route_C44_G01.DAL.Data.Contexts;
+using Company.Route_C44_G01.DAL.Models;
 using Company.Route_C44_G01.PL.Mapping;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -20,6 +22,9 @@ namespace Company.Route_C44_G01.PL
             builder.Services.AddScoped<IDepartmentRepo,DepartmentRepository>(); // Register DepartmentRepository for dependency injection
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>(); // Register UnitOfWork for dependency injection
             builder.Services.AddScoped<IEmployeeRepo, EmployeeRepository>(); // Register EmployeeRepository for dependency injection
+            builder.Services.AddIdentity<AppUser, IdentityRole>()
+                            .AddEntityFrameworkStores<CompanyDbContext>(); // Add Identity services to the container and applying dependency injection
+
             //builder.Services.AddTransient<IMapper, Mapper>(); // Register AutoMapper for dependency injection
             builder.Services.AddDbContext<CompanyDbContext>(options =>
             {
