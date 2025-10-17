@@ -1,5 +1,6 @@
 ﻿using Company.Route_C44_G01.DAL.Models;
 using Company.Route_C44_G01.PL.DTOS;
+using Company.Route_C44_G01.PL.Helpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -103,6 +104,57 @@ namespace Company.Route_C44_G01.PL.Controllers
             await _signInManager.SignOutAsync();
             return RedirectToAction("SignIn");
         }
+        #endregion
+
+        #region Forget Password
+        [HttpGet]
+        public IActionResult ForgetPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ForgetPassword(ForgetPassDTO model)
+        {
+            if (ModelState.IsValid)
+            {
+                var usr = await _userManager.FindByEmailAsync(model.Email);
+                if (usr is not null)
+                {
+                    //Generate Token
+                    var token = await _userManager.GeneratePasswordResetTokenAsync(usr);
+
+
+                    //Create Url
+                    var url = Url.Action("ResetPassword", "Account", new { email = model.Email, token }, Request.Scheme);
+
+                    //Create email
+                    var email = new Email()
+                    {
+                        To = model.Email,
+                        Subject = "Reset Password",
+                        Body = url
+                    };
+
+                    //Send Email
+                    var flag = EmailSettings.SendEmail(email);
+                    if (flag)
+                    {
+                        //Check your email
+                        return RedirectToAction("CheckYourEmail");
+                    }
+                }
+            }
+            ModelState.AddModelError("", "Invalid Email !!");
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult CheckYourEmail()
+        {
+            return View();
+        }
+
         #endregion
     }
 }
