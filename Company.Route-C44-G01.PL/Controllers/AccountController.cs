@@ -156,5 +156,44 @@ namespace Company.Route_C44_G01.PL.Controllers
         }
 
         #endregion
+
+        #region Reset Password
+        [HttpGet]
+        public IActionResult ResetPassword(string email, string token)
+        {
+            TempData["email"] = email;
+            TempData["token"] = token;
+
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPassDTO model)
+        {
+            if (ModelState.IsValid)
+            {
+                var email = TempData["email"] as string;
+                var token = TempData["token"] as string;
+                if (email is null || token is null)
+                {
+                    return BadRequest("Invalid Operations");
+                }
+                var usr = await _userManager.FindByEmailAsync(email);
+                if (usr != null)
+                {
+                    var result = await _userManager.ResetPasswordAsync(usr, token, model.NewPassword);
+                    if (result.Succeeded)
+                    {
+                        return RedirectToAction("SignIn");
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Invalid Reset password Operation !!");
+                }
+            }
+            return View(model);
+        }
+        #endregion
+
     }
 }
